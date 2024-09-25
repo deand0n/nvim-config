@@ -18,7 +18,7 @@ return {
 				"ts_ls",
 				"lua_ls",
 				-- "clang",
-				"pyright",
+				-- "pyright",
 				"tailwindcss",
 			},
 		})
