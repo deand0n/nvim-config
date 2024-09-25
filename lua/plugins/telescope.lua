@@ -3,7 +3,16 @@ return {
 	tag = "0.1.6",
 	dependencies = { "nvim-lua/plenary.nvim" },
 	config = function()
-		require("telescope").setup()
+		local actions = require("telescope.actions")
+		require("telescope").setup({
+			defaults = {
+				mappings = {
+					i = {
+						["<esc>"] = actions.close,
+					},
+				},
+			},
+		})
 
 		-- set keymaps
 		local keymap = vim.keymap
