@@ -5,6 +5,7 @@ vim.keymap.set("n", "<leader>-n", "<CMD>Oil<CR>", { desc = "Open parent director
 vim.keymap.set("n", "<leader>-f", "<CMD>Oil --float<CR>", { desc = "Open parent directory" })
 
 vim.keymap.set("i", "jk", "<ESC>")
+vim.keymap.set("i", "<ESC>", "<Nop>")
 
 -- New Windows
 vim.keymap.set("n", "<leader>[", "<CMD>vsplit<CR>")
