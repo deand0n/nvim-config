@@ -3,6 +3,8 @@ return {
 	dependencies = {
 		"williamboman/mason-lspconfig.nvim",
 		"WhoIsSethDaniel/mason-tool-installer.nvim",
+		"williamboman/mason.nvim",
+		"neovim/nvim-lspconfig",
 	},
 	config = function()
 		require("mason").setup()
@@ -30,6 +32,13 @@ return {
 				"eslint_d",
 			},
 		})
+
+		local lsp = require("lspconfig")
+		lsp.cssls.setup({})
+		lsp.html.setup({})
+		lsp.svelte.setup({})
+		lsp.ts_ls.setup({})
+		lsp.tailwindcss.setup({})
 	end,
 	opts = {
 		ui = {
