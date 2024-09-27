@@ -19,7 +19,7 @@ return {
 				"jsonls",
 				"ts_ls",
 				"lua_ls",
-				-- "clang",
+				"clangd",
 				-- "pyright",
 				"tailwindcss",
 			},
@@ -34,11 +34,14 @@ return {
 		})
 
 		local lsp = require("lspconfig")
-		lsp.lua_ls.setup({})
 		lsp.cssls.setup({})
+		lsp.eslint.setup({})
 		lsp.html.setup({})
 		lsp.svelte.setup({})
+		lsp.jsonls.setup({})
 		lsp.ts_ls.setup({})
+		lsp.lua_ls.setup({})
+		lsp.clangd.setup({})
 		lsp.tailwindcss.setup({})
 	end,
 	opts = {
