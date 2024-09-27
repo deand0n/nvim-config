@@ -34,6 +34,7 @@ return {
 		})
 
 		local lsp = require("lspconfig")
+		lsp.lua_ls.setup({})
 		lsp.cssls.setup({})
 		lsp.html.setup({})
 		lsp.svelte.setup({})
