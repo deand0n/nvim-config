@@ -37,7 +37,7 @@ return {
 		dashboard.section.header.opts.hl = pick_color()
 
 		dashboard.section.buttons.val = {
-			dashboard.button("<Leader>-f", "  Oil File Explorer"),
+			dashboard.button("<Leader>-f", "  Open File Explorer"),
 			dashboard.button("<Leader>tf", "  Find File in cwd"),
 			dashboard.button("q", "  Quit", ":qa<cr>"),
 		}
