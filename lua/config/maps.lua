@@ -20,3 +20,6 @@ vim.keymap.set("n", "<TAB>", "<CMD>tabnext<CR>")
 vim.keymap.set("n", "<S-TAB>", "<CMD>tabnext<CR>")
 
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
+
+vim.keymap.set("n", "<leader>gD", "<cmd>lua vim.lsp.buf.declaration()<CR>", { desc = "Go to Declaration" })
+vim.keymap.set("n", "<leader>gd", "<cmd>lua vim.lsp.buf.definition()<CR>", { desc = "Go to Definition" })
