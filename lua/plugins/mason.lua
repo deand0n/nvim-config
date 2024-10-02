@@ -20,7 +20,6 @@ return {
 				"ts_ls",
 				"lua_ls",
 				"clangd",
-				-- "pyright",
 				"tailwindcss",
 			},
 		})
