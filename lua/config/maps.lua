@@ -6,8 +6,9 @@ vim.keymap.set("n", "<leader>-f", "<CMD>Oil --float<CR>", { desc = "Open parent 
 
 vim.keymap.set("i", "jk", "<ESC>")
 vim.keymap.set("i", "<ESC>", "<Nop>")
-vim.keymap.set("n", "L", "$")
-vim.keymap.set("n", "H", "^")
+vim.keymap.set({ "v", "n" }, "L", "$")
+vim.keymap.set({ "v", "n" }, "H", "^")
+vim.keymap.set("n", "p", '"0p')
 
 -- New Windows
 vim.keymap.set("n", "<leader>[", "<CMD>vsplit<CR>")
