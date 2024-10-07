@@ -6,6 +6,8 @@ vim.keymap.set("n", "<leader>-f", "<CMD>Oil --float<CR>", { desc = "Open parent 
 
 vim.keymap.set("i", "jk", "<ESC>")
 vim.keymap.set("i", "<ESC>", "<Nop>")
+vim.keymap.set("n", "L", "$")
+vim.keymap.set("n", "H", "^")
 
 -- New Windows
 vim.keymap.set("n", "<leader>[", "<CMD>vsplit<CR>")
@@ -25,5 +27,10 @@ vim.keymap.set("n", "<S-TAB>", "<CMD>tabnext<CR>")
 
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 
-vim.keymap.set("n", "<leader>gD", "<cmd>lua vim.lsp.buf.declaration()<CR>", { desc = "Go to Declaration" })
-vim.keymap.set("n", "<leader>gd", "<cmd>lua vim.lsp.buf.definition()<CR>", { desc = "Go to Definition" })
+-- vim.keymap.set("n", "<leader>gD", "<cmd>lua vim.lsp.buf.declaration()<CR>", { desc = "Go to Declaration" })
+-- vim.keymap.set("n", "<leader>gd", "<cmd>lua vim.lsp.buf.definition()<CR>", { desc = "Go to Definition" })
+
+vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { desc = "✨lsp go to declaration" })
+vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "✨lsp go to definition" })
+vim.keymap.set("n", "gt", vim.lsp.buf.type_definition, { desc = "✨lsp go to type definition" })
+vim.keymap.set("n", "gi", vim.lsp.buf.implementation, { desc = "✨lsp go to implementation" })
