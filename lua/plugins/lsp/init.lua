@@ -1,9 +1,4 @@
--- if true then
--- 	return {}
--- end
-
 return {
-
 	{
 		"neovim/nvim-lspconfig",
 		event = "VeryLazy",
@@ -134,8 +129,57 @@ return {
 				"clangd",
 				"tailwindcss",
 			}
+
 			local on_attach = function(client, buffer)
-				-- print("on_attach")
+				vim.keymap.set("n", "<leader>cl", "<cmd>LspInfo<cr>", { desc = "Lsp Info" })
+				vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "Goto Definition", has = "definition" })
+				vim.keymap.set("n", "gr", vim.lsp.buf.references, { desc = "References", nowait = true })
+				vim.keymap.set("n", "gI", vim.lsp.buf.implementation, { desc = "Goto Implementation" })
+				vim.keymap.set("n", "gy", vim.lsp.buf.type_definition, { desc = "Goto T[y]pe Definition" })
+				vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { desc = "Goto Declaration" })
+				vim.keymap.set("n", "K", vim.lsp.buf.hover, { desc = "Hover" })
+				vim.keymap.set(
+					"n",
+					"gK",
+					vim.lsp.buf.signature_help,
+					{ desc = "Signature Help", has = "signatureHelp" }
+				)
+				vim.keymap.set(
+					"n",
+					"<c-k>",
+					vim.lsp.buf.signature_help,
+					{ mode = "i", desc = "Signature Help", has = "signatureHelp" }
+				)
+				vim.keymap.set(
+					"n",
+					"<leader>ca",
+					vim.lsp.buf.code_action,
+					{ desc = "Code Action", mode = { "n", "v" }, has = "codeAction" }
+				)
+				vim.keymap.set(
+					"n",
+					"<leader>cc",
+					vim.lsp.codelens.run,
+					{ desc = "Run Codelens", mode = { "n", "v" }, has = "codeLens" }
+				)
+				vim.keymap.set(
+					"n",
+					"<leader>cC",
+					vim.lsp.codelens.refresh,
+					{ desc = "Refresh & Display Codelens", mode = { "n" }, has = "codeLens" }
+				)
+				-- vim.keymap.set( { "<leader>cR", LazyVim.lsp.rename_file, desc = "Rename File", mode ={"n"}, has = { "workspace/didRenameFiles", "workspace/willRenameFiles" } },
+				vim.keymap.set("n", "<leader>cr", vim.lsp.buf.rename, { desc = "Rename", has = "rename" })
+				-- vim.keymap.set( { "<leader>cA", LazyVim.lsp.action.source, desc = "Source Action", has = "codeAction" },
+				-- { "]]", function() LazyVim.lsp.words.jump(vim.v.count1) end, has = "documentHighlight",
+				--   desc = "Next Reference", cond = function() return LazyVim.lsp.words.enabled end },
+				-- { "[[", function() LazyVim.lsp.words.jump(-vim.v.count1) end, has = "documentHighlight",
+				--   desc = "Prev Reference", cond = function() return LazyVim.lsp.words.enabled end },
+				-- { "<a-n>", function() LazyVim.lsp.words.jump(vim.v.count1, true) end, has = "documentHighlight",
+				--   desc = "Next Reference", cond = function() return LazyVim.lsp.words.enabled end },
+				-- { "<a-p>", function() LazyVim.lsp.words.jump(-vim.v.count1, true) end, has = "documentHighlight",
+				--   desc = "Prev Reference", cond = function() return LazyVim.lsp.words.enabled end },
+				--
 			end
 
 			local mason_lspconfig = require("mason-lspconfig")
