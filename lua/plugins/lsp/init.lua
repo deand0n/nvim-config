@@ -118,6 +118,134 @@ return {
 			return ret
 		end,
 		config = function(_, opts)
+			local get_clients = function(opts)
+				local ret = {}
+				if vim.lsp.get_clients then
+					ret = vim.lsp.get_clients(opts)
+				else
+					ret = vim.lsp.get_active_clients(opts)
+					if opts and opts.method then
+						ret = vim.tbl_filter(function(client)
+							return client.supports_method(opts.method, { bufnr = opts.bufnr })
+						end, ret)
+					end
+				end
+				return opts and opts.filter and vim.tbl_filter(opts.filter, ret) or ret
+			end
+
+			local on_rename = function(from, to, rename)
+				local changes = {
+					files = { {
+						oldUri = vim.uri_from_fname(from),
+						newUri = vim.uri_from_fname(to),
+					} },
+				}
+
+				local clients = get_clients()
+				for _, client in ipairs(clients) do
+					if client.supports_method("workspace/willRenameFiles") then
+						local resp = client.request_sync("workspace/willRenameFiles", changes, 1000, 0)
+						if resp and resp.result ~= nil then
+							vim.lsp.util.apply_workspace_edit(resp.result, client.offset_encoding)
+						end
+					end
+				end
+
+				if rename then
+					rename()
+				end
+
+				for _, client in ipairs(clients) do
+					if client.supports_method("workspace/didRenameFiles") then
+						client.notify("workspace/didRenameFiles", changes)
+					end
+				end
+			end
+
+			---@param opts? { buf?: number, spec?: LazyRootSpec[], all?: boolean }
+			local detect = function(opts)
+				opts = opts or {}
+				opts.spec = opts.spec or type(vim.g.root_spec) == "table" and vim.g.root_spec or M.spec
+				opts.buf = (opts.buf == nil or opts.buf == 0) and vim.api.nvim_get_current_buf() or opts.buf
+
+				local ret = {} ---@type LazyRoot[]
+				for _, spec in ipairs(opts.spec) do
+					local paths = M.resolve(spec)(opts.buf)
+					paths = paths or {}
+					paths = type(paths) == "table" and paths or { paths }
+					local roots = {} ---@type string[]
+					for _, p in ipairs(paths) do
+						local pp = M.realpath(p)
+						if pp and not vim.tbl_contains(roots, pp) then
+							roots[#roots + 1] = pp
+						end
+					end
+					table.sort(roots, function(a, b)
+						return #a > #b
+					end)
+					if #roots > 0 then
+						ret[#ret + 1] = { spec = spec, paths = roots }
+						if opts.all == false then
+							break
+						end
+					end
+				end
+				return ret
+			end
+			-- returns the root directory based on:
+			-- * lsp workspace folders
+			-- * lsp root_dir
+			-- * root pattern of filename of the current buffer
+			-- * root pattern of cwd
+			local get = function(opts)
+				opts = opts or {}
+				local buf = opts.buf or vim.api.nvim_get_current_buf()
+				if not ret then
+					local roots = detect({ all = false, buf = buf })
+					ret = roots[1] and roots[1].paths[1] or vim.uv.cwd()
+				end
+				if opts and opts.normalize then
+					return ret
+				end
+				return ret
+			end
+			local realpath = function(path)
+				if path == "" or path == nil then
+					return nil
+				end
+				path = vim.uv.fs_realpath(path) or path
+				-- return LazyVim.norm(path)
+				return path
+			end
+
+			local rename_file = function()
+				local buf = vim.api.nvim_get_current_buf()
+				local old = assert(realpath(vim.api.nvim_buf_get_name(buf)))
+				local root = assert(realpath(get({ normalize = true })))
+				assert(old:find(root, 1, true) == 1, "File not in project root")
+
+				local extra = old:sub(#root + 2)
+
+				vim.ui.input({
+					prompt = "New File Name: ",
+					default = extra,
+					completion = "file",
+				}, function(new)
+					if not new or new == "" or new == extra then
+						return
+					end
+					-- new = LazyVim.norm(root .. "/" .. new)
+					new = root .. "/" .. new
+					vim.fn.mkdir(vim.fs.dirname(new), "p")
+					on_rename(old, new, function()
+						vim.fn.rename(old, new)
+						vim.cmd.edit(new)
+						vim.api.nvim_buf_delete(buf, { force = true })
+						vim.fn.delete(old)
+					end)
+				end)
+			end
+
 			local servers = {
 				"cssls",
 				"eslint",
@@ -143,7 +271,7 @@ return {
 				vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "Code Action" })
 				vim.keymap.set("n", "<leader>cc", vim.lsp.codelens.run, { desc = "Run Codelens" })
 				vim.keymap.set("n", "<leader>cC", vim.lsp.codelens.refresh, { desc = "Refresh & Display Codelens" })
-				-- vim.keymap.set( { "<leader>cR", LazyVim.lsp.rename_file, desc = "Rename File", mode ={"n"}, has = { "workspace/didRenameFiles", "workspace/willRenameFiles" } },
+				vim.keymap.set("n", "<leader>cR", rename_file, { desc = "Rename File" })
 				vim.keymap.set("n", "<leader>cr", vim.lsp.buf.rename, { desc = "Rename" })
 				-- vim.keymap.set( { "<leader>cA", LazyVim.lsp.action.source, desc = "Source Action", has = "codeAction" },
 				-- { "]]", function() LazyVim.lsp.words.jump(vim.v.count1) end, has = "documentHighlight",
