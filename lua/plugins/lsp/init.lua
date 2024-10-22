@@ -117,20 +117,52 @@ return {
 			}
 			return ret
 		end,
-		config = function(_, opts)
+		config = function()
+			function dump(o)
+				if type(o) == "table" then
+					local s = "{ "
+					for k, v in pairs(o) do
+						if type(k) ~= "number" then
+							k = '"' .. k .. '"'
+						end
+						s = s .. "[" .. k .. "] = " .. dump(v) .. ","
+					end
+					return s .. "} "
+				else
+					return tostring(o)
+				end
+			end
+
 			local get_clients = function(opts)
-				local ret = {}
+				local ret = {} ---@type vim.lsp.Client[]
 				if vim.lsp.get_clients then
 					ret = vim.lsp.get_clients(opts)
 				else
+					---@diagnostic disable-next-line: deprecated
 					ret = vim.lsp.get_active_clients(opts)
 					if opts and opts.method then
+						---@param client vim.lsp.Client
 						ret = vim.tbl_filter(function(client)
 							return client.supports_method(opts.method, { bufnr = opts.bufnr })
 						end, ret)
 					end
 				end
 				return opts and opts.filter and vim.tbl_filter(opts.filter, ret) or ret
+				-- 	local ret = {}
+				-- 	if vim.lsp.get_clients then
+				-- 		ret = vim.lsp.get_clients()
+				-- 	else
+				-- 		---@diagnostic disable-next-line: deprecated
+				-- 		ret = vim.lsp.get_active_clients()
+				-- 		if opts and opts.method then
+				-- 			ret = vim.tbl_filter(function(client)
+				-- 				return client.supports_method(opts.method, { bufnr = opts.bufnr })
+				-- 			end, ret)
+				-- 		end
+				-- 	end
+				--
+				-- 	print(dump(ret))
+				-- 	return vim.tbl_filter(ret) or ret
 			end
 
 			local on_rename = function(from, to, rename)
@@ -162,20 +194,94 @@ return {
 				end
 			end
 
+			local realpath = function(path)
+				if path == "" or path == nil then
+					return nil
+				end
+				path = vim.uv.fs_realpath(path) or path
+				-- return LazyVim.norm(path)
+				return path
+			end
+
+			local bufpath = function(buf)
+				return realpath(vim.api.nvim_buf_get_name(assert(buf)))
+			end
+
+			local detectors = {
+				cwd = function()
+					return { vim.uv.cwd() }
+				end,
+				lsp = function(buf)
+					local bufpath = bufpath(buf)
+					if not bufpath then
+						return {}
+					end
+					local roots = {} ---@type string[]
+					local clients = get_clients({ bufnr = buf })
+					clients = vim.tbl_filter(function(client)
+						return not vim.tbl_contains(vim.g.root_lsp_ignore or {}, client.name)
+					end, clients)
+					for _, client in pairs(clients) do
+						local workspace = client.config.workspace_folders
+						for _, ws in pairs(workspace or {}) do
+							roots[#roots + 1] = vim.uri_to_fname(ws.uri)
+						end
+						if client.root_dir then
+							roots[#roots + 1] = client.root_dir
+						end
+					end
+					return vim.tbl_filter(function(path)
+						-- path = LazyVim.norm(path)
+						return path and bufpath:find(path, 1, true) == 1
+					end, roots)
+				end,
+				pattern = function(buf, patterns)
+					patterns = type(patterns) == "string" and { patterns } or patterns
+					local path = bufpath(buf) or vim.uv.cwd()
+					local pattern = vim.fs.find(function(name)
+						for _, p in ipairs(patterns) do
+							if name == p then
+								return true
+							end
+							if p:sub(1, 1) == "*" and name:find(vim.pesc(p:sub(2)) .. "$") then
+								return true
+							end
+						end
+						return false
+					end, { path = path, upward = true })[1]
+					return pattern and { vim.fs.dirname(pattern) } or {}
+				end,
+			}
+
+			local resolve = function(spec)
+				if detectors[spec] then
+					return detectors[spec]
+				elseif type(spec) == "function" then
+					return spec
+				end
+				return function(buf)
+					return detectors.pattern(buf, spec)
+				end
+			end
 			---@param opts? { buf?: number, spec?: LazyRootSpec[], all?: boolean }
 			local detect = function(opts)
 				opts = opts or {}
-				opts.spec = opts.spec or type(vim.g.root_spec) == "table" and vim.g.root_spec or M.spec
+				-- print("asdf")
+				-- print(dump(vim.g.root_spec))
+				-- print("333")
+				opts.spec = opts.spec or type(vim.g.root_spec) == "table" and vim.g.root_spec
 				opts.buf = (opts.buf == nil or opts.buf == 0) and vim.api.nvim_get_current_buf() or opts.buf
+				-- print(dump(opts))
 
-				local ret = {} ---@type LazyRoot[]
+				local ret = {}
 				for _, spec in ipairs(opts.spec) do
-					local paths = M.resolve(spec)(opts.buf)
+					print(dump(opts.buf))
+					local paths = resolve(spec)(opts.buf)
 					paths = paths or {}
 					paths = type(paths) == "table" and paths or { paths }
 					local roots = {} ---@type string[]
 					for _, p in ipairs(paths) do
-						local pp = M.realpath(p)
+						local pp = realpath(p)
 						if pp and not vim.tbl_contains(roots, pp) then
 							roots[#roots + 1] = pp
 						end
@@ -208,14 +314,6 @@ return {
 					return ret
 				end
 				return ret
-			end
-			local realpath = function(path)
-				if path == "" or path == nil then
-					return nil
-				end
-				path = vim.uv.fs_realpath(path) or path
-				-- return LazyVim.norm(path)
-				return path
 			end
 
 			local rename_file = function()
@@ -292,9 +390,41 @@ return {
 
 			local lsp = require("lspconfig")
 			for key, value in pairs(servers) do
+				if value == "lua_ls" then
+					lsp.lua_ls.setup({
+						on_attach = on_attach,
+						settings = {
+							Lua = {
+								runtime = {
+									-- Tell the language server which version of Lua you're using
+									-- (most likely LuaJIT in the case of Neovim)
+									version = "LuaJIT",
+								},
+								diagnostics = {
+									-- Get the language server to recognize the `vim` global
+									globals = {
+										"vim",
+										"require",
+									},
+								},
+								workspace = {
+									-- Make the server aware of Neovim runtime files
+									library = vim.api.nvim_get_runtime_file("", true),
+								},
+								-- Do not send telemetry data containing a randomized but unique identifier
+								telemetry = {
+									enable = false,
+								},
+							},
+						},
+					})
+					goto continue
+				end
+
 				lsp[value].setup({
 					on_attach = on_attach,
 				})
+				::continue::
 			end
 		end,
 	},
