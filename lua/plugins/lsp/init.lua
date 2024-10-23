@@ -439,6 +439,7 @@ return {
 				"stylua",
 				"prettier",
 				"eslint_d",
+				-- "clang-format",
 			},
 		},
 	},

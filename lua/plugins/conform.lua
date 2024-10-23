@@ -17,7 +17,9 @@ return {
 				yaml = { "prettier" },
 				markdown = { "prettier" },
 				lua = { "stylua" },
-				python = { "isort", "black" },
+				c = { "clang-format" },
+
+				-- python = { "isort", "black" },
 			},
 			format_on_save = {
 				lsp_fallback = true,
@@ -25,6 +27,10 @@ return {
 				timeout_ms = 1000,
 			},
 		})
+
+		conform.formatters.clang_format = {
+			prepend_args = { "--style", "webkit" },
+		}
 
 		vim.keymap.set({ "n", "v" }, "<leader>f", function()
 			conform.format({
