@@ -167,10 +167,12 @@ return {
 
 			local on_rename = function(from, to, rename)
 				local changes = {
-					files = { {
-						oldUri = vim.uri_from_fname(from),
-						newUri = vim.uri_from_fname(to),
-					} },
+					files = {
+						{
+							oldUri = vim.uri_from_fname(from),
+							newUri = vim.uri_from_fname(to),
+						},
+					},
 				}
 
 				local clients = get_clients()
@@ -419,6 +421,49 @@ return {
 						},
 					})
 					goto continue
+				else
+					if value == "clangd" then
+						lsp.clangd.setup({
+							keys = {
+								{
+									"<leader>ch",
+									"<cmd>ClangdSwitchSourceHeader<cr>",
+									desc = "Switch Source/Header (C/C++)",
+								},
+							},
+							-- root_dir = function(fname)
+							-- 	return require("lspconfig.util").root_pattern(
+							-- 		"Makefile",
+							-- 		"configure.ac",
+							-- 		"configure.in",
+							-- 		"config.h.in",
+							-- 		"meson.build",
+							-- 		"meson_options.txt",
+							-- 		"build.ninja"
+							-- 	)(fname) or require("lspconfig.util").root_pattern(
+							-- 		"compile_commands.json",
+							-- 		"compile_flags.txt"
+							-- 	)(fname) or require("lspconfig.util").find_git_ancestor(fname)
+							-- end,
+							capabilities = {
+								offsetEncoding = { "utf-16" },
+							},
+							cmd = {
+								"clangd",
+								"--background-index",
+								"--clang-tidy",
+								"--header-insertion=iwyu",
+								"--completion-style=detailed",
+								"--function-arg-placeholders",
+								"--fallback-style=llvm",
+							},
+							init_options = {
+								usePlaceholders = true,
+								completeUnimported = true,
+								clangdFileStatus = true,
+							},
+						})
+					end
 				end
 
 				lsp[value].setup({
@@ -439,6 +484,7 @@ return {
 				"stylua",
 				"prettier",
 				"eslint_d",
+				"codelldb",
 				-- "clang-format",
 			},
 		},

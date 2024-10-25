@@ -9,6 +9,6 @@ return {
 	},
 	config = function()
 		vim.keymap.set("n", "<leader>e", "<CMD>Neotree toggle<CR>", { desc = "Neotree toggle" })
-		vim.keymap.set("n", "<leader>o", "<CMD>Neotree focus<CR>", { desc = "Neotree focus" })
+		-- vim.keymap.set("n", "<leader>o", "<CMD>Neotree focus<CR>", { desc = "Neotree focus" })
 	end,
 }

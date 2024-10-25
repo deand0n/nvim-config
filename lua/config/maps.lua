@@ -8,7 +8,7 @@ vim.keymap.set("i", "jk", "<ESC>")
 vim.keymap.set("i", "<ESC>", "<Nop>")
 vim.keymap.set({ "v", "n" }, "L", "$")
 vim.keymap.set({ "v", "n" }, "H", "^")
-vim.keymap.set("n", "p", '"0p')
+-- vim.keymap.set("n", "p", '"0p')
 
 -- New Windows
 vim.keymap.set("n", "<leader>[", "<CMD>vsplit<CR>")
