@@ -3,6 +3,7 @@ vim.keymap.set("n", "<leader>q", "<CMD>q<CR>", { desc = "Quit file" })
 
 vim.keymap.set("n", "<leader>-n", "<CMD>Oil<CR>", { desc = "Open parent directory" })
 vim.keymap.set("n", "<leader>-f", "<CMD>Oil --float<CR>", { desc = "Open parent directory" })
+vim.keymap.set("n", "<leader>-", "", { desc = "+oil" })
 
 vim.keymap.set("i", "jk", "<ESC>")
 vim.keymap.set("i", "<ESC>", "<Nop>")
@@ -27,6 +28,8 @@ vim.keymap.set("n", "<TAB>", "<CMD>tabnext<CR>")
 vim.keymap.set("n", "<S-TAB>", "<CMD>tabnext<CR>")
 
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
+
+vim.keymap.set({ "n", "v" }, "<leader>/", "", { desc = "+comment" })
 
 -- vim.keymap.set("n", "<leader>gD", "<cmd>lua vim.lsp.buf.declaration()<CR>", { desc = "Go to Declaration" })
 -- vim.keymap.set("n", "<leader>gd", "<cmd>lua vim.lsp.buf.definition()<CR>", { desc = "Go to Definition" })

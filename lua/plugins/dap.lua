@@ -137,6 +137,8 @@ return {
 		},
 
 		config = function()
+			require("mason-nvim-dap").setup()
+
 			-- load mason-nvim-dap here, after all adapters have been setup
 			-- if LazyVim.has("mason-nvim-dap.nvim") then
 			-- 	require("mason-nvim-dap").setup(LazyVim.opts("mason-nvim-dap.nvim"))
