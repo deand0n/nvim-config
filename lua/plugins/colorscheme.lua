@@ -7,7 +7,7 @@ return {
 			flavour = "auto", -- latte, frappe, macchiato, mocha
 			background = { -- :h background
 				light = "latte",
-				dark = "macchiato",
+				dark = "frappe",
 			},
 		})
 		-- load the colorscheme here

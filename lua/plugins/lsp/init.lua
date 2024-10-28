@@ -367,7 +367,7 @@ return {
 				vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { desc = "Goto Declaration" })
 				vim.keymap.set("n", "K", vim.lsp.buf.hover, { desc = "Hover" })
 				vim.keymap.set("n", "gK", vim.lsp.buf.signature_help, { desc = "Signature Help" })
-				vim.keymap.set("n", "<c-k>", vim.lsp.buf.signature_help, { desc = "Signature Help" })
+				-- vim.keymap.set("n", "<c-k>", vim.lsp.buf.signature_help, { desc = "Signature Help" })
 				vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "Code Action" })
 				vim.keymap.set("n", "<leader>cc", vim.lsp.codelens.run, { desc = "Run Codelens" })
 				vim.keymap.set("n", "<leader>cC", vim.lsp.codelens.refresh, { desc = "Refresh & Display Codelens" })

@@ -60,8 +60,8 @@ return {
 		keymaps = {
 			["g?"] = "actions.show_help",
 			["<CR>"] = "actions.select",
-			["<C-s>"] = { "actions.select", opts = { vertical = true }, desc = "Open the entry in a vertical split" },
-			["<C-h>"] = {
+			["<C-[>"] = { "actions.select", opts = { vertical = true }, desc = "Open the entry in a vertical split" },
+			["<C-]>"] = {
 				"actions.select",
 				opts = { horizontal = true },
 				desc = "Open the entry in a horizontal split",
