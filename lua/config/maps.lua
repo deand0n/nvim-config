@@ -1,3 +1,4 @@
+-- TODO: move plugin dependent maps to plugin configuration
 vim.keymap.set("n", "<C-s>", "<CMD>update<CR>", { desc = "Save file" })
 vim.keymap.set("n", "<leader>q", "<CMD>q<CR>", { desc = "Quit file" })
 

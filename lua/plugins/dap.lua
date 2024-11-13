@@ -93,7 +93,7 @@ return {
 				desc = "Step Out",
 			},
 			{
-				"<leader>dO",
+				"<leader>dd",
 				function()
 					require("dap").step_over()
 				end,
@@ -168,6 +168,7 @@ return {
 			if not dap.adapters["codelldb"] then
 				require("dap").adapters["codelldb"] = {
 					type = "server",
+					name = "codelldb",
 					host = "localhost",
 					port = "${port}",
 					executable = {
