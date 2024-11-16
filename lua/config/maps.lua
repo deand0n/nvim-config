@@ -1,6 +1,7 @@
 -- TODO: move plugin dependent maps to plugin configuration
 vim.keymap.set("n", "<C-s>", "<CMD>update<CR>", { desc = "Save file" })
-vim.keymap.set("n", "<leader>q", "<CMD>q<CR>", { desc = "Quit file" })
+vim.keymap.set("n", "<leader>q", "<CMD>bdelete<CR>", { desc = "Quit buffer" })
+vim.keymap.set("n", "<C-q>", "<CMD>q<CR>", { desc = "Quit file" })
 
 vim.keymap.set("n", "<leader>-n", "<CMD>Oil<CR>", { desc = "Open parent directory" })
 vim.keymap.set("n", "<leader>-f", "<CMD>Oil --float<CR>", { desc = "Open parent directory" })
@@ -25,6 +26,11 @@ vim.keymap.set("n", "<C-down>", "<CMD>resize -5<CR>")
 vim.keymap.set("n", "<C-left>", "<CMD>vertical resize +5<CR>")
 vim.keymap.set("n", "<C-right>", "<CMD>vertical resize -5<CR>")
 
+vim.keymap.set("n", "]b", "<CMD>bnext<CR>")
+vim.keymap.set("n", "[b", "<CMD>bprev<CR>")
+vim.keymap.set("n", "<leader>bd", "<CMD>bdelete<CR>")
+
+vim.keymap.set("n", "tt", "<CMD>tabnew<CR>")
 vim.keymap.set("n", "<TAB>", "<CMD>tabnext<CR>")
 vim.keymap.set("n", "<S-TAB>", "<CMD>tabnext<CR>")
 

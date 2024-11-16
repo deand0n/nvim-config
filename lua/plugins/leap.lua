@@ -1,10 +1,10 @@
 return {
 	"ggandor/leap.nvim",
 	config = function()
-		vim.keymap.set("n", "t", "<Plug>(leap)")
-		vim.keymap.set("n", "T", "<Plug>(leap-from-window)")
-		vim.keymap.set({ "x", "o" }, "t", "<Plug>(leap-forward)")
-		vim.keymap.set({ "x", "o" }, "T", "<Plug>(leap-backward)")
+		vim.keymap.set("n", "T", "<Plug>(leap)")
+		-- vim.keymap.set("n", "T", "<Plug>(leap-from-window)")
+		-- vim.keymap.set({ "x", "o" }, "t", "<Plug>(leap-forward)")
+		-- vim.keymap.set({ "x", "o" }, "T", "<Plug>(leap-backward)")
 
 		-- Define equivalence classes for brackets and quotes, in addition to
 		-- the default whitespace group.
