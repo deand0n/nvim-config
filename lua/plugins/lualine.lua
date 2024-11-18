@@ -4,8 +4,10 @@ return {
 	opts = {
 		theme = "base16",
 		sections = {
-			lualine_b = { "branch", "diagnostics" },
+			lualine_b = { "diagnostics" },
 			lualine_c = { "buffers" },
+			lualine_y = {},
+			lualine_z = {},
 		},
 	},
 }
